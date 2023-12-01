@@ -1,0 +1,98 @@
+// coco compile
+// logiclab run input1.lab | grep calibration
+// logiclab run inpit2.lab | grep calibration
+coco d01
+
+// coco labtest --fuel 1000000
+// < invoke TEST.Calibrate(values: ["1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"])
+// > calibration: 142
+endpoint invokable Calibrate(values []String) -> (calibration U64):
+    var sum U64
+    for _, s in values:
+        sum += (val) <- value(s)
+    calibration = sum
+
+// < invoke TEST.Calibrate2(values: ["two1nine", "eightwothree", "abcone2threexyz", "xtwone3four", "4nineeightseven2", "zoneight234", "7pqrstsixteen"])
+// > calibration: 281
+endpoint invokable Calibrate2(values []String) -> (calibration U64):
+    var sum U64
+    for _, s in values:
+        sum += (val) <- value_text(s)
+    calibration = sum
+
+func value(s String) -> (val U64):
+    var first_digit, last_digit U64
+    var got_digit = false
+
+    for idx in range(len(s)):
+        if (is_digit) <- is_digit(c: s[idx:idx+1]):
+            var digit = digit(c: s[idx:idx+1])
+            if got_digit:
+                last_digit = digit
+            else:
+                first_digit = digit
+                last_digit = digit
+                got_digit = true
+    val = first_digit * 10 + last_digit
+
+func is_digit(c String) -> (is_digit Bool):
+    is_digit = c == "0" || c == "1" || c == "2" || c == "3" || c == "4" || c == "5" || c == "6" || c == "7" || c == "8" || c == "9"
+
+func digit(c String) -> (digit U64):
+    digit = U64(c)
+
+func value_text(s String) -> (val U64):
+    var first_digit, last_digit U64
+    var got_digit = false
+
+    var l = len(s)
+    // we can't skip over words as input has combined digits
+    // like "zerone", where the last digit is 1
+    // so we can just iterate through string character-by-character
+    for idx in range(l):
+        var digit_len, digit U64
+        digit_len, digit = (digit_len, digit) <- text_digit(s: s[idx:])
+        if digit_len > 0:
+            if got_digit:
+                last_digit = digit
+            else:
+                first_digit = digit
+                last_digit = digit
+                got_digit = true
+    val = first_digit * 10 + last_digit
+
+func text_digit(s String) -> (digit_len U64, digit U64):
+    var l = len(s)
+    if l < 1:
+        return
+    if (is_digit) <- is_digit(c: s[0:1]):
+        return (digit_len: 1, digit: U64(c: s[:1]))
+    if l < 3:
+        return
+    var d = s[:3]
+    if d == "one":
+        return (digit_len: 3, digit: 1)
+    if d == "two":
+        return (digit_len: 3, digit: 2)
+    if d == "six":
+        return (digit_len: 3, digit: 6)
+    if l < 4:
+        return
+    d = s[:4]
+    if d == "zero":
+        return (digit_len: 4, digit: 0)
+    if d == "four":
+        return (digit_len: 4, digit: 4)
+    if d == "five":
+        return (digit_len: 4, digit: 5)
+    if d == "nine":
+        return (digit_len: 4, digit: 9)
+    if l < 5:
+        return
+    d = s[:5]
+    if d == "three":
+        return (digit_len: 5, digit: 3)
+    if d == "seven":
+        return (digit_len: 5, digit: 7)
+    if d == "eight":
+        return (digit_len: 5, digit: 8)
