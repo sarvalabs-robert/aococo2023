@@ -21,9 +21,10 @@ If you're interested in more details, read on!
 
 Install Coco compiler, release 0.3.5 from https://cocolang.dev/releases
 
-Results for Day1 are well, in the folder `01`.
+Results for Day1 are well, in the folder `01`. You need to initialize `logiclab` before first run (if there's not `./logiclab` folder).
 ```sh
 cd 01
+logiclab init
 ```
 
 ## Test
