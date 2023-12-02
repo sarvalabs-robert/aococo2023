@@ -1,0 +1,79 @@
+coco d02
+
+class RGB:
+    field red U64
+    field green U64
+    field blue U64
+
+class Game:
+    field id U64
+    field draws []RGB
+
+    method power(self) -> (pow U64):
+        var r, g, b = 0
+        for _, d in self.draws:
+            if r < d.red:
+                r = d.red
+            if g < d.green:
+                g = d.green
+            if b < d.blue:
+                b = d.blue
+        pow = r * g * b
+
+// < invoke TEST.Possible(s: "Game 13: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green", lim_blue:6, lim_green:5, lim_red:5)
+// > is_possible: true
+// < invoke TEST.Possible(s: "Game 13: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green", lim_blue:6, lim_green:5, lim_red:3)
+// > is_possible: false
+endpoint invokable Possible(s String, lim_blue U64, lim_green U64, lim_red U64) -> (is_possible Bool):
+    is_possible = (is_possible) <- game_is_possible(s, limits: RGB{blue: lim_blue, green: lim_green, red: lim_red})
+
+func game_from_string(s String) -> (game Game):
+    var cursor = 5 // skip "Game ", position at the first digit
+    var game_id, offset U64
+    game_id, offset = (num, digits) <- read_number(s: s[cursor:])
+    cursor += offset + 2 // number + ": "
+
+    var ds []RGB
+    var draw = RGB{red: 0, green:0, blue:0} // make an empty draw
+    var l = len(s)
+    // counter is just a loop that executes some limited number of times
+    // if we traverse character by charater, we could do this in this loop,
+    // but as we'll be moving the cursor faster, we'll break out of this loop
+    // before. Still, this syntax guarantees we can't create an infinite loop.
+    for counter in range(l-cursor):
+        if cursor >= l:
+            // store the last draw
+            ds = append(ds, draw)
+            break
+        var ch = s[cursor:cursor+1]
+        // skip spaces and commas
+        if ch == " " || ch == ",":
+            cursor += 1
+            continue
+        if ch == ";":
+            cursor += 1
+            ds = append(ds, draw)
+            draw = RGB{red: 0, green:0, blue:0}
+            continue
+        var num U64
+        num, offset = (num, digits) <- read_number(s: s[cursor:])
+        cursor += offset +1 // skip space after number, point to color
+        if s[cursor:cursor+3] == "red":
+            draw.red = num
+            cursor += 3
+        else if s[cursor:cursor+4] == "blue":
+            draw.blue = num
+            cursor += 4
+        else if s[cursor:cursor+5] == "green":
+            draw.green = num
+            cursor += 5
+        else:
+            throw(f"`{s}` is not a color")
+    game = Game{id:game_id, draws: ds}
+
+func game_is_possible(s String, limits RGB) -> (is_possible Bool):
+    var game = game_from_string(s)
+    for _, d in game.draws:
+        if limits.red < d.red || limits.green < d.green || limits.blue < d.blue:
+            return (is_possible: false)
+    is_possible = true

@@ -26,6 +26,11 @@ Results for Day1 are well, in the folder `01`. You need to initialize `logiclab`
 cd 01
 logiclab init
 ```
+To invoke (=run) any function (endpoint) in Logiclab, a sender has to be designated. This is done only once. First start the logiclab with `logiclab start` and then issue two commands:
+```sh
+register TestUser
+set designated.sender TestUser
+```
 
 ## Test
 As Coco enables testing out-of-the box, the code includes tests from the exercise in the source code, so we can verify correctness. Default base fuel in `logiclab` is 10000, which is far too little for loops, so even the simplest test need higher fuel (1,000,000 is a good start).
@@ -44,4 +49,12 @@ The real exercises require long inputs, as Coco can't read files, we have to pro
 ```
 logiclab run input1.lab | grep calibration
 logiclab run input2.lab | grep calibration
+```
+
+# Day2
+Both answers are in the same script, so:
+```sh
+cd 02
+coco compile
+logiclab run input1.lab | grep sum
 ```
