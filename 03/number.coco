@@ -1,0 +1,15 @@
+coco d03
+
+func read_number(s String) -> (num U64, digits U64):
+    var number_len U64
+    for i in range(len(s)):
+        if (is_digit) <- is_digit(c: s[i:i+1]):
+            number_len += 1
+            continue
+        break
+    if number_len > 0:
+        num = U64(s[:number_len])
+    digits = number_len
+
+func is_digit(c String) -> (is_digit Bool):
+    is_digit = c == "0" || c == "1" || c == "2" || c == "3" || c == "4" || c == "5" || c == "6" || c == "7" || c == "8" || c == "9"

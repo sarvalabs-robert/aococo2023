@@ -1,0 +1,136 @@
+coco d03
+
+class Num:
+    field n U64
+    field pos U64
+
+    method digits(self) -> (l U64):
+        if self.n <= 9:
+            return (l: 1)
+        if self.n <= 99:
+            return (l: 2)
+        l = 3
+
+class Sym:
+    field c String
+    field pos U64
+
+class Line:
+    field nums []Num
+    field syms []Sym
+
+// < invoke TEST.PNSum(input: ["467..114..", "...*......", "..35..633.", "......#...", "617*......", ".....+.58.", "..592.....", "......755.", "...$.*....", ".664.598.."])
+// > pn: 4361
+endpoint invokable PNSum(input []String) -> (pn U64):
+    var pns = (pn) <- part_numbers(input: input)
+    var sum U64
+    for i, p in pns:
+        sum += p
+    yield pn sum
+
+// < invoke TEST.PartNumbers(input: ["467..114..", "...*......", "..35..633.", "......#...", "617*......", ".....+.58.", "..592.....", "......755.", "...$.*....", ".664.598.."])
+// > pn: [467 35 633 617 592 755 664 598]
+endpoint invokable PartNumbers(input []String) -> (pn []U64):
+    yield pn (pn) <- part_numbers(input: input)
+
+func part_numbers(input []String) -> (pn []U64):
+    var parts []U64
+    var mx []Line
+    for _, s in input:
+        mx = append(mx, (line) <- read_line(s))
+    var lmx = len(mx)
+    for i in range(lmx):
+        var l = mx[i]
+        for _, n in l.nums:
+            // is there a symbol in the line above
+            if i > 0:
+                if (has_symbol) <- has_symbol(syms:mx[i-1].syms, pos: n.pos, l: (l) <- n.digits()):
+                    parts = append(parts, n.n)
+                    continue
+            // is there a symbol immediately before/after the number
+            if (has_symbol) <- has_symbol(syms:mx[i].syms, pos: n.pos, l: (l) <- n.digits()):
+                parts = append(parts, n.n)
+                continue
+            // is there a symbol in the line below
+            if i < lmx - 1:
+                if (has_symbol) <- has_symbol(syms:mx[i+1].syms, pos: n.pos, l: (l) <- n.digits()):
+                    parts = append(parts, n.n)
+                    continue
+    pn = parts
+
+// < invoke TEST.RL(s: "467..114*.")
+// > line: map[nums:[map[n:467 pos:0] map[n:114 pos:5]] syms:[map[c:* pos:8]]]
+endpoint invokable RL(s String) -> (line Line):
+    line = read_line(s)
+
+func read_line(s String) -> (line Line):
+    var l = len(s)
+    var idx U64
+    var ns []Num
+    var sy []Sym
+    for i in range(l):
+        if idx >= l:
+            break
+        var c = s[idx:idx+1]
+        if c == ".":
+            idx += 1
+            continue
+        var num, digits U64
+        num, digits = (num, digits) <- read_number(s: s[idx:])
+        if digits == 0: // we have a symbol here
+            sy = append(sy, Sym{c: c, pos: idx})
+            idx += 1
+            continue
+        ns = append(ns, Num{n: num, pos: idx})
+        idx += digits
+    line = Line{nums: ns, syms: sy}
+
+func has_symbol(syms []Sym, pos U64, l U64) -> (has_symbol Bool):
+    var pl = pos + l
+    for _, sy in syms:
+        var p = sy.pos
+        if p + 1 >= pos:
+            if p <= pl:
+                return (has_symbol: true)
+
+// < invoke TEST.Gears(input: ["467..114..", "...*......", "..35..633.", "......#...", "617*......", ".....+.58.", "..592.....", "......755.", "...$.*....", ".664.598.."])
+// > sum: 467835
+endpoint invokable Gears(input []String) -> (sum U64):
+    sum = (sum) <- gears(input: input)
+
+func gears(input []String) -> (sum U64):
+    var mx []Line
+    for _, s in input:
+        mx = append(mx, (line) <- read_line(s))
+    var lmx = len(mx)
+    var sum_ratio U64
+    for i in range(lmx):
+        for _, sy in mx[i].syms:
+            if sy.c != "*":
+                continue
+            var numbers []U64
+            // any numbers in the line above
+            if i > 0:
+                numbers = merge(numbers, (numbers) <- numbers(nums:mx[i-1].nums, pos: sy.pos))
+            // is there a number immediately before/after the symbol
+            numbers = merge(numbers, (numbers) <- numbers(nums:mx[i].nums, pos: sy.pos))
+            // is there a symbol in the line below
+            if i < lmx - 1:
+                numbers = merge(numbers, (numbers) <- numbers(nums:mx[i+1].nums, pos: sy.pos))
+            if len(numbers) == 2:
+                sum_ratio += numbers[0] * numbers[1]
+    sum = sum_ratio
+
+func numbers(nums []Num, pos U64) -> (numbers []U64):
+    var ns []U64
+    for _, n in nums:
+        if n.pos == pos + 1:
+            ns = append(ns, n.n)
+            continue
+        if n.pos == pos:
+            ns = append(ns, n.n)
+            continue
+        if n.pos <= pos:
+            if n.pos + (l) <- n.digits() >= pos:
+                ns = append(ns, n.n)
+    numbers = ns
