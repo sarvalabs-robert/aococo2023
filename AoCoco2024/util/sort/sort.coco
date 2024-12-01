@@ -1,0 +1,37 @@
+coco package sort
+
+// sort sorts a varray of U64 numbers in ascending or descending order
+pub func sort(input []U64, ascending Bool) -> (sorted []U64):
+    if len(input) < 2:
+        return sorted input
+    if len(input) == 2:
+        if ascending:
+            if input[0] > input[1]:
+                return sorted []U64{input[1], input[0]}
+            else:
+                return sorted input
+        else:
+            if input[1] > input[0]:
+                return sorted []U64{input[1], input[0]}
+            else:
+                return sorted input
+    memory mid_value = input[len(input) / 2]
+    memory left []U64
+    memory right []U64
+    memory mids []U64
+    for _, el in input:
+        if el == mid_value:
+            append(mids, mid_value)
+            continue
+        if ascending:
+            if el < mid_value:
+                append(left, el)
+            else:
+                append(right, el)
+        else:
+            if el > mid_value:
+                append(left, el)
+            else:
+                append(right, el)
+    memory left_mids = merge((sorted) <- sort(input: left, ascending), mids)
+    sorted = merge(left_mids, (sorted) <- sort(input: right, ascending))

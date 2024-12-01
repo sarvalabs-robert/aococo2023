@@ -1,0 +1,29 @@
+coco d05
+
+// < invoke TEST.test_sort(a: [5, 6, 3, 4, 7, 10, 1, 8, 2, 9])
+// > sorted: [1 2 3 4 5 6 7 8 9 10]
+// < invoke TEST.test_sort(a: [])
+// > sorted: []
+// < invoke TEST.test_sort(a: [42])
+// > sorted: [42]
+// < invoke TEST.test_sort(a: [42, 1])
+// > sorted: [1 42]
+
+endpoint invokable test_sort(a []U64) -> (sorted []U64):
+    sorted = sort(a)
+
+func sort(a []U64) -> (sorted []U64):
+    var l = len(a)
+    if l <= 1:
+        return (sorted: a)
+    var b []U64 = a
+    var rr []U64
+    var r = range(l)
+    for i in range(l):
+        for j in range(l-i-1, i):
+            rr = append(rr, i)
+            if b[j] > b[j+1]:
+                var x = b[j+1]
+                b[j+1] = b[j]
+                b[j] = x
+    sorted = b

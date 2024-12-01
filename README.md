@@ -1,3 +1,26 @@
+# Advent of Coco 2024
+
+A year after the first attempt to do Advent of Code in Coco programming language, here come the new examples. Now with Coco compiler v0.6.0 that supports packages, and has integrated execution of PISA code, programming and running the code got much easier. And using Advent of Code to find compiler bugs is still very much the main aim of this exercise.
+
+The code can be run with
+```
+coco test --debug_pisa
+```
+as the correct results are parts of the test. So, the numbers are in `.coco` files, but the fun is getting to them by running the code.
+
+# Day1
+The results are already in the code, find the lines in `d01.coco`
+```
+// > distance: ...
+// > similarity: ...
+```
+
+To run the code and see if the results are OK, do this:
+```sh
+cd AoCoco2024/01
+coco test --debug_pisa
+```
+
 # Advent of Coco 2023
 
 Here's an attempt to do https://adventofcode.com in Coco programming language (https://cocolang.dev).
