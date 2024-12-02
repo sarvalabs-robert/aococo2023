@@ -1,0 +1,12 @@
+coco package string
+
+pub func to_string(a []U64) -> (s String):
+    memory tmp String
+    memory first = true
+    for _, n in a:
+        if !first:
+            tmp = f"{tmp} {n}"
+        else:
+            tmp = String(n)
+            first = false
+    s = f"[{tmp}]"
