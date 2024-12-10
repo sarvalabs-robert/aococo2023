@@ -1,0 +1,35 @@
+coco package string
+
+// const DIGITS Map[String]U64 = Map[String]U64{"0":0, "1":1}
+// sort sorts a varray of U64 numbers in ascending or descending order
+pub func num_list(s String) -> (list []U64):
+    memory l = []U64{}
+    memory is_number Bool
+    memory val U64
+    for _, c in s:
+        if c >= "0" && c <= "9":
+            is_number = true
+            val = val * 10 + (digit) <- digit(c)
+        else:
+            if is_number:
+                append(l, val)
+                val = 0
+                is_number = false
+    if is_number:
+        append(l, val)
+    list = l
+
+pub func digit(c String) -> (digit U64):
+    memory DIGITS = Map[String]U64{
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9,
+    }
+    digit = DIGITS[c]
