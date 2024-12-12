@@ -45,7 +45,7 @@ endpoint invoke Parse(lines []String, operations []String) -> (n U64):
                 enabled = false
     n = s
 
-func tokens(line String) -> (tokens []Token):
+function tokens(line String) -> (tokens []Token):
     memory operation = "mul"
     memory op_len = len(operation)
     memory op_point U64
@@ -87,7 +87,7 @@ func tokens(line String) -> (tokens []Token):
             op_point = 0
     tokens = toks
 
-func tokens2(line String, operations []String) -> (tokens []Token):
+function tokens2(line String, operations []String) -> (tokens []Token):
     memory potential_operations []U64
     memory op_lens []U64
     memory op_point U64

@@ -30,7 +30,7 @@ endpoint invoke Safe2(reports [][]U64) -> (safe U64):
         rc++
     safe = count
 
-func is_safe(report []U64, damper Bool) -> (is_safe Bool):
+function is_safe(report []U64, damper Bool) -> (is_safe Bool):
     if len(report) < 2:
         return is_safe true
     memory ascending Bool

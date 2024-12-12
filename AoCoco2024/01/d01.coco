@@ -40,7 +40,7 @@ endpoint invoke Similar(left_list []U64, right_list []U64) -> (similarity U64):
     similarity = s
 
 // count counts the number of occurences of a value in the list
-func count(value U64, list []U64) -> (count U64):
+function count(value U64, list []U64) -> (count U64):
     memory c U64
     for _, el in list:
         if value == el:

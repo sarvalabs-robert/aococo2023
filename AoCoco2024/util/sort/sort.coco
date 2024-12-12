@@ -1,7 +1,7 @@
 coco package sort
 
 // sort sorts a varray of U64 numbers in ascending or descending order
-pub func sort(input []U64, ascending Bool) -> (sorted []U64):
+pub function sort(input []U64, ascending Bool) -> (sorted []U64):
     if len(input) < 2:
         return sorted input
     if len(input) == 2:

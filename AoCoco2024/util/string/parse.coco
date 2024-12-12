@@ -2,7 +2,7 @@ coco package string
 
 // const DIGITS Map[String]U64 = Map[String]U64{"0":0, "1":1}
 // sort sorts a varray of U64 numbers in ascending or descending order
-pub func num_list(s String) -> (list []U64):
+pub function num_list(s String) -> (list []U64):
     memory l = []U64{}
     memory is_number Bool
     memory val U64
@@ -19,7 +19,7 @@ pub func num_list(s String) -> (list []U64):
         append(l, val)
     list = l
 
-pub func digit(c String) -> (digit U64):
+pub function digit(c String) -> (digit U64):
     memory DIGITS = Map[String]U64{
         "0": 0,
         "1": 1,

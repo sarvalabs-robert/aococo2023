@@ -1,7 +1,7 @@
 coco package math
 
 // sort sorts a varray of U64 numbers in ascending or descending order
-pub func dist(a U64, b U64) -> (dist U64):
+pub function dist(a U64, b U64) -> (dist U64):
     if a >= b:
         dist = a - b
     else:
